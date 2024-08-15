@@ -30,7 +30,7 @@ export default function Navbar() {
             <Text style={styles.logo}>BLOSM</Text>
           </TouchableOpacity>
         </Link>
-        <TouchableOpacity onPress={toggleMenu}>
+        <TouchableOpacity onPress={toggleMenu} style={styles.menuButton}>
           <Bars3Icon size={24} color="#5E9020" />
         </TouchableOpacity>
       </View>
@@ -41,21 +41,23 @@ export default function Navbar() {
         visible={menuOpen}
         onRequestClose={toggleMenu}
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalHeader}>
-            <TouchableOpacity onPress={toggleMenu}>
-              <XMarkIcon size={24} color="#5E9020" />
-            </TouchableOpacity>
+        <View style={[styles.modalContainer, { paddingTop: insets.top }]}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <TouchableOpacity onPress={toggleMenu} style={styles.closeButton}>
+                <XMarkIcon size={24} color="#5E9020" />
+              </TouchableOpacity>
+            </View>
+            {routes.map((route) => (
+              <TouchableOpacity
+                key={route.path}
+                onPress={() => navigateTo(route.path)}
+                style={styles.menuItem}
+              >
+                <Text style={styles.menuItemText}>{route.name}</Text>
+              </TouchableOpacity>
+            ))}
           </View>
-          {routes.map((route) => (
-            <TouchableOpacity
-              key={route.path}
-              onPress={() => navigateTo(route.path)}
-              style={styles.menuItem}
-            >
-              <Text style={styles.menuItemText}>{route.name}</Text>
-            </TouchableOpacity>
-          ))}
         </View>
       </Modal>
     </View>
@@ -78,9 +80,15 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontFamily: "NerkoOne",
   },
+  menuButton: {
+    padding: 8,
+  },
   modalContainer: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: "rgba(255, 255, 255, 0.95)",
+  },
+  modalContent: {
+    flex: 1,
   },
   modalHeader: {
     flexDirection: "row",
@@ -88,10 +96,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     paddingVertical: 16,
   },
+  closeButton: {
+    padding: 8,
+  },
   menuItem: {
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: "#e5e5e5",
+    marginHorizontal: 32,
   },
   menuItemText: {
     fontSize: 14,
