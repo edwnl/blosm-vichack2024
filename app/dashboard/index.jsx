@@ -8,12 +8,13 @@ import {
   StyleSheet,
   Dimensions,
   TextInput,
-  Modal
+  Modal,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { UserIcon, XMarkIcon } from "react-native-heroicons/outline";
 import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
+import Navbar from "../../components/Navbar";
 
 const { width } = Dimensions.get("window");
 const cardSize = (width - 48) / 2; // 16px padding on each side, 16px gap between cards
@@ -51,7 +52,10 @@ const friendsData = [
 ];
 
 const FriendItem = ({ item, onPress }) => (
-  <TouchableOpacity style={styles.friendItem} onPress={() => onPress(item.name)}>
+  <TouchableOpacity
+    style={styles.friendItem}
+    onPress={() => onPress(item.name)}
+  >
     <Image source={item.flowerImage} style={styles.flowerImage} />
     <Text style={styles.flowerType}>{item.flowerType}</Text>
     <Text style={styles.lastSeen}>{item.lastSeen}</Text>
@@ -95,88 +99,91 @@ export default function Dashboard() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>
-        Manage your{"\n"}
-        <Text style={styles.gardenTitle}>garden</Text>.
-      </Text>
-      <View style={styles.searchContainer}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search"
-          value={searchQuery}
-          onChangeText={setSearchQuery}
+    <>
+      <Navbar />
+      <View style={styles.container}>
+        <Text style={styles.title}>
+          Manage your{"\n"}
+          <Text style={styles.gardenTitle}>garden</Text>.
+        </Text>
+        <View style={styles.searchContainer}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </View>
+        <FlatList
+          data={friendsData}
+          renderItem={({ item }) => (
+            <FriendItem item={item} onPress={navigateToFriendDetail} />
+          )}
+          keyExtractor={(item) => item.id}
+          numColumns={2}
+          columnWrapperStyle={styles.row}
         />
-      </View>
-      <FlatList
-        data={friendsData}
-        renderItem={({ item }) => (
-          <FriendItem item={item} onPress={navigateToFriendDetail} />
-        )}
-        keyExtractor={(item) => item.id}
-        numColumns={2}
-        columnWrapperStyle={styles.row}
-      />
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={() => setIsModalVisible(true)}
-      >
-        <UserIcon size={20} color="white" />
-        <Text style={styles.addButtonText}>Add Friends</Text>
-      </TouchableOpacity>
-
-      <Modal
-        visible={isModalVisible}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setIsModalVisible(false)}
-      >
-        <BlurView
-          style={styles.blurContainer}
-          blurType="light"
-          blurAmount={10}
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => setIsModalVisible(true)}
         >
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Add a friend</Text>
-              <TouchableOpacity onPress={() => setIsModalVisible(false)}>
-                <XMarkIcon size={24} color="#5E9020" />
-              </TouchableOpacity>
+          <UserIcon size={20} color="white" />
+          <Text style={styles.addButtonText}>Add Friends</Text>
+        </TouchableOpacity>
+
+        <Modal
+          visible={isModalVisible}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setIsModalVisible(false)}
+        >
+          <BlurView
+            style={styles.blurContainer}
+            blurType="light"
+            blurAmount={2}
+          >
+            <View style={styles.modalContent}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Add a friend</Text>
+                <TouchableOpacity onPress={() => setIsModalVisible(false)}>
+                  <XMarkIcon size={24} color="#5E9020" />
+                </TouchableOpacity>
+              </View>
+              <TextInput
+                style={styles.usernameInput}
+                placeholder="What's their username?"
+                value={username}
+                onChangeText={setUsername}
+              />
+              {message !== "" && (
+                <Text
+                  style={[
+                    styles.message,
+                    isSuccess ? styles.successMessage : styles.errorMessage,
+                  ]}
+                >
+                  {message}
+                </Text>
+              )}
+              <View style={styles.modalButtons}>
+                <TouchableOpacity
+                  style={[styles.modalButton, styles.cancelButton]}
+                  onPress={() => setIsModalVisible(false)}
+                >
+                  <Text style={styles.cancelButtonText}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.modalButton, styles.okButton]}
+                  onPress={handleAddFriend}
+                >
+                  <Text style={styles.okButtonText}>OK</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-            <TextInput
-              style={styles.usernameInput}
-              placeholder="What's their username?"
-              value={username}
-              onChangeText={setUsername}
-            />
-            {message !== "" && (
-              <Text
-                style={[
-                  styles.message,
-                  isSuccess ? styles.successMessage : styles.errorMessage,
-                ]}
-              >
-                {message}
-              </Text>
-            )}
-            <View style={styles.modalButtons}>
-              <TouchableOpacity
-                style={[styles.modalButton, styles.cancelButton]}
-                onPress={() => setIsModalVisible(false)}
-              >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.modalButton, styles.okButton]}
-                onPress={handleAddFriend}
-              >
-                <Text style={styles.okButtonText}>OK</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </BlurView>
-      </Modal>
-    </SafeAreaView>
+          </BlurView>
+        </Modal>
+      </View>
+    </>
   );
 }
 
@@ -184,14 +191,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-    padding: 16,
+    paddingTop: 48,
   },
   title: {
     fontSize: 32,
     fontFamily: "Montserrat",
     textAlign: "center",
     color: "black",
-    marginBottom: 20,
+    marginBottom: 32,
   },
   gardenTitle: {
     color: "#5E9020",
@@ -199,12 +206,14 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     marginBottom: 16,
+    paddingBottom: 16,
   },
   searchInput: {
-    backgroundColor: "#F0F0F0",
     borderRadius: 8,
     padding: 12,
     fontFamily: "Montserrat",
+    borderColor: "#EDEDED",
+    borderWidth: 2,
   },
   row: {
     justifyContent: "space-between",
