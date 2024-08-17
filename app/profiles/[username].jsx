@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -8,13 +8,10 @@ import {
   FlatList,
   SafeAreaView,
   Dimensions,
-  ScrollView,
+  Animated,
 } from "react-native";
-import {
-  UserIcon,
-  PlusIcon,
-  ArrowUpIcon,
-} from "react-native-heroicons/outline";
+import { ArrowUpIcon } from "react-native-heroicons/outline";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { width, height } = Dimensions.get("window");
 const numRows = 2;
@@ -112,23 +109,30 @@ const memoryData = [
   },
 ];
 
+const HEADER_MAX_HEIGHT = 300; // Adjust this value based on your design
+const HEADER_MIN_HEIGHT = 50; // Height of the sticky header
+
 const UserProfilePage = () => {
   const [activeTab, setActiveTab] = useState("Garden");
-  const [headerHeight, setHeaderHeight] = useState(0);
-  const headerRef = useRef(null);
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const insets = useSafeAreaInsets();
 
-  useEffect(() => {
-    if (headerRef.current) {
-      headerRef.current.measure((x, y, width, height) => {
-        setHeaderHeight(height);
-      });
-    }
-  }, []);
+  const headerHeight = scrollY.interpolate({
+    inputRange: [0, HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT],
+    outputRange: [HEADER_MAX_HEIGHT, HEADER_MIN_HEIGHT],
+    extrapolate: "clamp",
+  });
+
+  const headerOpacity = scrollY.interpolate({
+    inputRange: [0, HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT],
+    outputRange: [1, 0],
+    extrapolate: "clamp",
+  });
 
   const renderFlowerColumn = ({ item }) => (
     <View>
       {item.map((flower) => (
-        <TouchableOpacity>
+        <TouchableOpacity key={flower.id}>
           <View key={flower.id} style={styles.flowerItem}>
             <Image source={flower.image} style={styles.flowerImage} />
           </View>
@@ -165,72 +169,100 @@ const UserProfilePage = () => {
     }
     return columns;
   };
+  const renderContent = () => {
+    if (activeTab === "Garden") {
+      return (
+        <FlatList
+          data={prepareFlowerData()}
+          renderItem={renderFlowerColumn}
+          keyExtractor={(item, index) => `column-${index}`}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.flowerGrid}
+          style={styles.flowerList}
+        />
+      );
+    } else {
+      return (
+        <FlatList
+          data={memoryData}
+          renderItem={renderMemoryItem}
+          keyExtractor={(item) => item.id}
+          style={styles.memoriesList}
+        />
+      );
+    }
+  };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView>
-        <View ref={headerRef} onLayout={() => {}}>
-          <View style={styles.profileInfo}>
-            <Image
-              source={require("../../assets/images/creeper.png")}
-              style={styles.profileImage}
-            />
-            <Text style={styles.username}>Auri</Text>
-            <Text style={styles.joinDate}>Gardening since 10 August 2024</Text>
-          </View>
-
-          <View style={styles.tabContainer}>
-            <TouchableOpacity
-              style={[styles.tab, activeTab === "Garden" && styles.activeTab]}
-              onPress={() => setActiveTab("Garden")}
-            >
-              <Text
-                style={[
-                  styles.tabText,
-                  activeTab === "Garden" && styles.activeTabText,
-                ]}
-              >
-                Garden
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.tab, activeTab === "Memories" && styles.activeTab]}
-              onPress={() => setActiveTab("Memories")}
-            >
-              <Text
-                style={[
-                  styles.tabText,
-                  activeTab === "Memories" && styles.activeTabText,
-                ]}
-              >
-                Memories
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {activeTab === "Garden" && (
-          <FlatList
-            data={prepareFlowerData()}
-            renderItem={renderFlowerColumn}
-            keyExtractor={(item, index) => `column-${index}`}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.flowerGrid}
-            style={styles.flowerList}
-          />
+    <View style={styles.container}>
+      <Animated.ScrollView
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: false },
         )}
+        contentContainerStyle={{ paddingTop: HEADER_MAX_HEIGHT }}
+      >
+        {renderContent()}
+      </Animated.ScrollView>
 
-        {activeTab === "Memories" && (
-          <FlatList
-            data={memoryData}
-            renderItem={renderMemoryItem}
-            keyExtractor={(item) => item.id}
-            style={styles.memoriesList}
+      <Animated.View
+        style={[
+          styles.header,
+          {
+            height: headerHeight,
+            paddingTop: insets.top,
+          },
+        ]}
+      >
+        <Animated.View style={[styles.profileInfo, { opacity: headerOpacity }]}>
+          <Image
+            source={require("../../assets/images/creeper.png")}
+            style={styles.profileImage}
           />
-        )}
-      </ScrollView>
-    </SafeAreaView>
+          <Text style={styles.username}>Auri</Text>
+          <Text style={styles.joinDate}>Gardening since 10 August 2024</Text>
+        </Animated.View>
+      </Animated.View>
+
+      <Animated.View
+        style={[
+          styles.tabContainer,
+          {
+            top: Animated.add(headerHeight, insets.top),
+            paddingTop: 0,
+          },
+        ]}
+      >
+        <TouchableOpacity
+          style={[styles.tab, activeTab === "Garden" && styles.activeTab]}
+          onPress={() => setActiveTab("Garden")}
+        >
+          <Text
+            style={[
+              styles.tabText,
+              activeTab === "Garden" && styles.activeTabText,
+            ]}
+          >
+            Garden
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tab, activeTab === "Memories" && styles.activeTab]}
+          onPress={() => setActiveTab("Memories")}
+        >
+          <Text
+            style={[
+              styles.tabText,
+              activeTab === "Memories" && styles.activeTabText,
+            ]}
+          >
+            Memories
+          </Text>
+        </TouchableOpacity>
+      </Animated.View>
+    </View>
   );
 };
 
@@ -239,29 +271,33 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
   },
+  header: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "white",
+    overflow: "hidden",
+    zIndex: 1,
+  },
   profileInfo: {
     alignItems: "center",
-    marginBottom: 24,
+    justifyContent: "center",
+    height: "100%",
   },
   profileImage: {
     width: 150,
     height: 150,
     borderRadius: 100,
     marginBottom: 20,
-    marginTop: 20,
   },
   username: {
-    alignSelf: "flex-start",
     fontSize: 26,
     fontFamily: "MontserratBold",
     color: "#333",
     marginBottom: 5,
-    marginTop: 10,
-    paddingHorizontal: 50,
   },
   joinDate: {
-    alignSelf: "flex-start",
-    paddingHorizontal: 50,
     fontSize: 13,
     fontFamily: "Montserrat",
     color: "#999",
@@ -270,6 +306,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderBottomWidth: 1,
     borderBottomColor: "#E0E0E0",
+    position: "absolute",
+    left: 0,
+    right: 0,
+    zIndex: 2,
+    backgroundColor: "white",
   },
   tab: {
     flex: 1,
@@ -294,7 +335,7 @@ const styles = StyleSheet.create({
   },
   flowerGrid: {
     paddingHorizontal: 7,
-    paddingTop: 10,
+    paddingTop: 52,
   },
   flowerItem: {
     width: itemSize,
@@ -311,7 +352,7 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
   memoriesList: {
-    marginTop: 16,
+    marginTop: 50,
   },
   memoryItem: {
     flexDirection: "row",
@@ -334,7 +375,7 @@ const styles = StyleSheet.create({
   memoryActivity: {
     fontSize: 14,
     fontFamily: "Montserrat",
-    fontWeight: 600,
+    fontWeight: "600",
     color: "#444",
     paddingBottom: 4,
     padding: 5,
