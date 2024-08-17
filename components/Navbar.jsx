@@ -6,8 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const routes = [
   { name: "Home", path: "/" },
-  { name: "Profile", path: "/profile" },
-  { name: "Friends", path: "/friends" },
+  { name: "Dashboard", path: "/dashboard" },
 ];
 
 export default function Navbar() {
@@ -18,7 +17,7 @@ export default function Navbar() {
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
   const navigateTo = (path) => {
-    router.push(path);
+    router.replace(path);
     setMenuOpen(false);
   };
 
