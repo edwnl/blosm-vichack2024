@@ -10,7 +10,11 @@ import {
   Dimensions,
   ScrollView,
 } from "react-native";
-import { UserIcon, PlusIcon } from "react-native-heroicons/outline";
+import {
+  UserIcon,
+  PlusIcon,
+  ArrowUpIcon,
+} from "react-native-heroicons/outline";
 
 const { width, height } = Dimensions.get("window");
 const numRows = 2;
@@ -67,20 +71,22 @@ const UserProfilePage = () => {
   );
 
   const renderMemoryItem = ({ item }) => (
-    <View style={styles.memoryItem}>
-      <Image source={item.flower} style={styles.memoryFlower} />
-      <View style={styles.memoryContent}>
-        <Text style={styles.memoryActivity}>{item.activity}</Text>
-        <Text style={styles.memoryDate}>{item.date}</Text>
+    <TouchableOpacity>
+      <View style={styles.memoryItem}>
+        <Image source={item.flower} style={styles.memoryFlower} />
+        <View style={styles.memoryContent}>
+          <Text style={styles.memoryActivity}>{item.activity}</Text>
+          <Text style={styles.memoryDate}>{item.date}</Text>
+        </View>
+        {item.xp ? (
+          <Text style={styles.memoryXP}>{item.xp}</Text>
+        ) : (
+          <View style={styles.addXPButton}>
+            <ArrowUpIcon size={10} color="#000" />
+          </View>
+        )}
       </View>
-      {item.xp ? (
-        <Text style={styles.memoryXP}>{item.xp}</Text>
-      ) : (
-        <TouchableOpacity style={styles.addXPButton}>
-          <PlusIcon size={16} color="#5E9020" />
-        </TouchableOpacity>
-      )}
-    </View>
+    </TouchableOpacity>
   );
 
   const prepareFlowerData = () => {
@@ -242,8 +248,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
     paddingHorizontal: 16,
   },
   memoryFlower: {
@@ -256,25 +260,27 @@ const styles = StyleSheet.create({
   },
   memoryActivity: {
     fontSize: 16,
-    fontFamily: "MontserratBold",
-    color: "#333",
+    fontFamily: "Montserrat",
+    fontWeight: 600,
+    color: "#444",
+    paddingBottom: 4,
   },
   memoryDate: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: "Montserrat",
-    color: "#666",
+    color: "#999",
   },
   memoryXP: {
     fontSize: 14,
-    fontFamily: "MontserratBold",
-    color: "#5E9020",
+    fontFamily: "Montserrat",
+    color: "#000",
   },
   addXPButton: {
     width: 24,
     height: 24,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#5E9020",
+    borderColor: "#000",
     justifyContent: "center",
     alignItems: "center",
   },
