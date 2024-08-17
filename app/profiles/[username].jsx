@@ -45,6 +45,71 @@ const memoryData = [
     flower: require("../../assets/images/flowers/flower1.png"),
     xp: "+12 xp",
   },
+  {
+    id: "3",
+    activity: "Got lunch at coffee shop",
+    date: "12 August 2024",
+    flower: require("../../assets/images/flowers/flower2.png"),
+  },
+  {
+    id: "4",
+    activity: "Went shopping together",
+    date: "10 August 2024",
+    flower: require("../../assets/images/flowers/flower1.png"),
+    xp: "+12 xp",
+  },
+  {
+    id: "5",
+    activity: "Got lunch at coffee shop",
+    date: "12 August 2024",
+    flower: require("../../assets/images/flowers/flower2.png"),
+  },
+  {
+    id: "6",
+    activity: "Went shopping together",
+    date: "10 August 2024",
+    flower: require("../../assets/images/flowers/flower1.png"),
+    xp: "+12 xp",
+  },
+  {
+    id: "7",
+    activity: "Got lunch at coffee shop",
+    date: "12 August 2024",
+    flower: require("../../assets/images/flowers/flower2.png"),
+  },
+  {
+    id: "8",
+    activity: "Went shopping together",
+    date: "10 August 2024",
+    flower: require("../../assets/images/flowers/flower1.png"),
+    xp: "+12 xp",
+  },
+  {
+    id: "9",
+    activity: "Got lunch at coffee shop",
+    date: "12 August 2024",
+    flower: require("../../assets/images/flowers/flower2.png"),
+  },
+  {
+    id: "10",
+    activity: "Went shopping together",
+    date: "10 August 2024",
+    flower: require("../../assets/images/flowers/flower1.png"),
+    xp: "+12 xp",
+  },
+  {
+    id: "11",
+    activity: "Got lunch at coffee shop",
+    date: "12 August 2024",
+    flower: require("../../assets/images/flowers/flower2.png"),
+  },
+  {
+    id: "12",
+    activity: "Went shopping together",
+    date: "10 August 2024",
+    flower: require("../../assets/images/flowers/flower1.png"),
+    xp: "+12 xp",
+  },
 ];
 
 const UserProfilePage = () => {
@@ -63,9 +128,11 @@ const UserProfilePage = () => {
   const renderFlowerColumn = ({ item }) => (
     <View>
       {item.map((flower) => (
-        <View key={flower.id} style={styles.flowerItem}>
-          <Image source={flower.image} style={styles.flowerImage} />
-        </View>
+        <TouchableOpacity>
+          <View key={flower.id} style={styles.flowerItem}>
+            <Image source={flower.image} style={styles.flowerImage} />
+          </View>
+        </TouchableOpacity>
       ))}
     </View>
   );
@@ -73,7 +140,9 @@ const UserProfilePage = () => {
   const renderMemoryItem = ({ item }) => (
     <TouchableOpacity>
       <View style={styles.memoryItem}>
-        <Image source={item.flower} style={styles.memoryFlower} />
+        <View style={styles.memoryFlowerContainer}>
+          <Image source={item.flower} style={styles.memoryFlower} />
+        </View>
         <View style={styles.memoryContent}>
           <Text style={styles.memoryActivity}>{item.activity}</Text>
           <Text style={styles.memoryDate}>{item.date}</Text>
@@ -224,13 +293,13 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   flowerGrid: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 7,
     paddingTop: 10,
   },
   flowerItem: {
     width: itemSize,
     height: itemSize,
-    backgroundColor: "#F0F0F0",
+    backgroundColor: "#F8F8F8",
     borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
@@ -247,33 +316,40 @@ const styles = StyleSheet.create({
   memoryItem: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 12,
+    paddingVertical: 14,
     paddingHorizontal: 16,
   },
-  memoryFlower: {
-    width: 40,
-    height: 40,
-    marginRight: 12,
+  memoryFlowerContainer: {
+    width: 50,
+    height: 50,
+    backgroundColor: "#F8F8F8",
+    borderRadius: 10,
+    marginRight: 25,
+    marginLeft: 10,
   },
+  memoryFlower: { width: 30, height: 30, margin: "auto" },
   memoryContent: {
     flex: 1,
   },
   memoryActivity: {
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: "Montserrat",
     fontWeight: 600,
     color: "#444",
     paddingBottom: 4,
+    padding: 5,
   },
   memoryDate: {
-    fontSize: 12,
+    fontSize: 11,
     fontFamily: "Montserrat",
     color: "#999",
+    padding: 2,
   },
   memoryXP: {
     fontSize: 14,
     fontFamily: "Montserrat",
     color: "#000",
+    marginRight: 10,
   },
   addXPButton: {
     width: 24,
@@ -283,6 +359,7 @@ const styles = StyleSheet.create({
     borderColor: "#000",
     justifyContent: "center",
     alignItems: "center",
+    marginRight: 10,
   },
 });
 
