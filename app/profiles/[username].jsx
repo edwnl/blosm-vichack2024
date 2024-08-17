@@ -41,7 +41,6 @@ const memoryData = [
     flower: require("../../assets/images/flowers/flower1.png"),
     xp: "+12 xp",
   },
-  // ... (add more memory items as needed)
 ];
 
 const UserProfilePage = () => {
@@ -182,12 +181,13 @@ const styles = StyleSheet.create({
     fontFamily: "MontserratBold",
     color: "#333",
     marginBottom: 5,
+    marginTop: 10,
     paddingHorizontal: 50,
   },
   joinDate: {
     alignSelf: "flex-start",
     paddingHorizontal: 50,
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: "Montserrat",
     color: "#999",
   },
@@ -219,6 +219,7 @@ const styles = StyleSheet.create({
   },
   flowerGrid: {
     paddingHorizontal: 16,
+    paddingTop: 10,
   },
   flowerItem: {
     width: itemSize,
