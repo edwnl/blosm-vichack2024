@@ -8,6 +8,8 @@ const routes = [
   { name: "Home", path: "/" },
   { name: "Profile", path: "/profile" },
   { name: "Friends", path: "/friends" },
+  { name: "Water", path: "/watering" },
+
 ];
 
 export default function Navbar() {
