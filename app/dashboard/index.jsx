@@ -7,13 +7,16 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
-  TextInput, Modal
+  TextInput,
+  Modal
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { UserIcon, XMarkIcon } from "react-native-heroicons/outline";
 import { BlurView } from "expo-blur";
+import { useRouter } from "expo-router";
 
 const { width } = Dimensions.get("window");
+const cardSize = (width - 48) / 2; // 16px padding on each side, 16px gap between cards
 
 // Dummy data for friends
 const friendsData = [
@@ -47,12 +50,12 @@ const friendsData = [
   },
 ];
 
-const FriendItem = ({ item }) => (
-  <View style={styles.friendItem}>
+const FriendItem = ({ item, onPress }) => (
+  <TouchableOpacity style={styles.friendItem} onPress={() => onPress(item.name)}>
     <Image source={item.flowerImage} style={styles.flowerImage} />
     <Text style={styles.flowerType}>{item.flowerType}</Text>
     <Text style={styles.lastSeen}>{item.lastSeen}</Text>
-  </View>
+  </TouchableOpacity>
 );
 
 export default function Dashboard() {
@@ -61,6 +64,7 @@ export default function Dashboard() {
   const [username, setUsername] = useState("");
   const [message, setMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
+  const router = useRouter();
 
   const handleAddFriend = () => {
     if (username.trim() === "") {
@@ -74,10 +78,20 @@ export default function Dashboard() {
     if (userExists) {
       setIsSuccess(true);
       setMessage("Friend added successfully!");
+      setTimeout(() => {
+        setIsModalVisible(false);
+        setUsername("");
+        setMessage("");
+        setIsSuccess(false);
+      }, 2000);
     } else {
       setIsSuccess(false);
       setMessage("User not found. Please try again.");
     }
+  };
+
+  const navigateToFriendDetail = (name) => {
+    router.push(`/friend/${name}`);
   };
 
   return (
@@ -96,7 +110,9 @@ export default function Dashboard() {
       </View>
       <FlatList
         data={friendsData}
-        renderItem={({ item }) => <FriendItem item={item} />}
+        renderItem={({ item }) => (
+          <FriendItem item={item} onPress={navigateToFriendDetail} />
+        )}
         keyExtractor={(item) => item.id}
         numColumns={2}
         columnWrapperStyle={styles.row}
@@ -170,17 +186,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     padding: 16,
   },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  logo: {
-    fontSize: 24,
-    fontFamily: "NerkoOne",
-    color: "#5E9020",
-  },
   title: {
     fontSize: 32,
     fontFamily: "Montserrat",
@@ -205,18 +210,20 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   friendItem: {
-    width: (width - 48) / 2,
+    width: cardSize,
+    height: cardSize,
     backgroundColor: "#F0F0F0",
     borderRadius: 8,
     padding: 16,
     marginBottom: 16,
     alignItems: "center",
+    justifyContent: "center",
   },
   flowerImage: {
-    width: 64,
-    height: 64,
+    width: cardSize * 0.6,
+    height: cardSize * 0.6,
     marginBottom: 8,
-    resizeMode: "stretch",
+    resizeMode: "contain",
   },
   flowerType: {
     fontSize: 16,
