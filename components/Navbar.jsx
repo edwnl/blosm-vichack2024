@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const routes = [
   { name: "Home", path: "/" },
-  { name: "Profile", path: "/profile" },
+  { name: "Profile", path: "/profiles/auri" },
   { name: "Friends", path: "/friends" },
 ];
 
