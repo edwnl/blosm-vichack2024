@@ -7,9 +7,11 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
-  TextInput,
+  TextInput, Modal
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { UserIcon, XMarkIcon } from "react-native-heroicons/outline";
+import { BlurView } from "expo-blur";
 
 const { width } = Dimensions.get("window");
 
@@ -55,6 +57,28 @@ const FriendItem = ({ item }) => (
 
 export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [username, setUsername] = useState("");
+  const [message, setMessage] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const handleAddFriend = () => {
+    if (username.trim() === "") {
+      setMessage("Please enter a username");
+      return;
+    }
+
+    // Simulate 80% chance of user existing
+    const userExists = Math.random() < 0.8;
+
+    if (userExists) {
+      setIsSuccess(true);
+      setMessage("Friend added successfully!");
+    } else {
+      setIsSuccess(false);
+      setMessage("User not found. Please try again.");
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -77,9 +101,65 @@ export default function Dashboard() {
         numColumns={2}
         columnWrapperStyle={styles.row}
       />
-      <TouchableOpacity style={styles.addButton}>
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => setIsModalVisible(true)}
+      >
+        <UserIcon size={20} color="white" />
         <Text style={styles.addButtonText}>Add Friends</Text>
       </TouchableOpacity>
+
+      <Modal
+        visible={isModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setIsModalVisible(false)}
+      >
+        <BlurView
+          style={styles.blurContainer}
+          blurType="light"
+          blurAmount={10}
+        >
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Add a friend</Text>
+              <TouchableOpacity onPress={() => setIsModalVisible(false)}>
+                <XMarkIcon size={24} color="#5E9020" />
+              </TouchableOpacity>
+            </View>
+            <TextInput
+              style={styles.usernameInput}
+              placeholder="What's their username?"
+              value={username}
+              onChangeText={setUsername}
+            />
+            {message !== "" && (
+              <Text
+                style={[
+                  styles.message,
+                  isSuccess ? styles.successMessage : styles.errorMessage,
+                ]}
+              >
+                {message}
+              </Text>
+            )}
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.cancelButton]}
+                onPress={() => setIsModalVisible(false)}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.okButton]}
+                onPress={handleAddFriend}
+              >
+                <Text style={styles.okButtonText}>OK</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </BlurView>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -155,10 +235,81 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     marginTop: 16,
+    flexDirection: "row",
+    justifyContent: "center",
   },
   addButtonText: {
     color: "white",
     fontSize: 16,
     fontFamily: "MontserratBold",
+    marginLeft: 8,
+  },
+  blurContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    borderRadius: 16,
+    padding: 20,
+    width: "80%",
+    maxWidth: 400,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontFamily: "MontserratBold",
+    color: "#5E9020",
+  },
+  usernameInput: {
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    borderRadius: 8,
+    padding: 12,
+    fontFamily: "Montserrat",
+    marginBottom: 20,
+  },
+  modalButtons: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+  },
+  modalButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginLeft: 10,
+  },
+  cancelButton: {
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: "#5E9020",
+  },
+  okButton: {
+    backgroundColor: "#5E9020",
+  },
+  cancelButtonText: {
+    color: "#5E9020",
+    fontFamily: "Montserrat",
+  },
+  okButtonText: {
+    color: "white",
+    fontFamily: "MontserratBold",
+  },
+  message: {
+    fontFamily: "Montserrat",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  successMessage: {
+    color: "#4CAF50",
+  },
+  errorMessage: {
+    color: "#F44336",
   },
 });

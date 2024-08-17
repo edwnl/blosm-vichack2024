@@ -8,7 +8,6 @@ import {
   Animated,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { UserIcon } from "react-native-heroicons/outline";
