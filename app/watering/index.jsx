@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Animated, Dimensions, Easing } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import Svg, { Path } from 'react-native-svg';
+import Svg, { Rect, Path } from 'react-native-svg';
 
 const { width, height } = Dimensions.get('window');
 
@@ -24,12 +24,43 @@ const WaterDroplet = ({ style }) => (
 );
 
 const PixelFlower = () => (
-  <View style={styles.pixelFlower}>
-    <View style={styles.flowerStem} />
-    <View style={styles.flowerHead} />
-    <View style={styles.flowerLeaf} />
-  </View>
+  <Svg width="64" height="64" viewBox="0 0 16 16">
+    {/* Stem */}
+    <Rect x="7" y="12" width="2" height="4" fill="#4CAF50" />
+    <Rect x="6" y="14" width="1" height="2" fill="#4CAF50" />
+    <Rect x="9" y="14" width="1" height="2" fill="#4CAF50" />
+    
+    {/* Leaves */}
+    <Rect x="5" y="11" width="2" height="2" fill="#66BB6A" />
+    <Rect x="9" y="10" width="2" height="2" fill="#66BB6A" />
+    
+    {/* Flower petals */}
+    <Rect x="7" y="2" width="2" height="2" fill="#FFC107" />
+    <Rect x="5" y="4" width="2" height="2" fill="#FFC107" />
+    <Rect x="9" y="4" width="2" height="2" fill="#FFC107" />
+    <Rect x="3" y="6" width="2" height="2" fill="#FFC107" />
+    <Rect x="11" y="6" width="2" height="2" fill="#FFC107" />
+    <Rect x="5" y="8" width="2" height="2" fill="#FFC107" />
+    <Rect x="9" y="8" width="2" height="2" fill="#FFC107" />
+    <Rect x="7" y="10" width="2" height="2" fill="#FFC107" />
+    
+    {/* Flower center */}
+    <Rect x="7" y="6" width="2" height="2" fill="#FF5722" />
+    <Rect x="6" y="5" width="1" height="1" fill="#FF5722" />
+    <Rect x="9" y="5" width="1" height="1" fill="#FF5722" />
+    <Rect x="5" y="6" width="1" height="2" fill="#FF5722" />
+    <Rect x="10" y="6" width="1" height="2" fill="#FF5722" />
+    <Rect x="6" y="8" width="1" height="1" fill="#FF5722" />
+    <Rect x="9" y="8" width="1" height="1" fill="#FF5722" />
+    
+    {/* Highlights */}
+    <Rect x="7" y="3" width="1" height="1" fill="#FFE082" />
+    <Rect x="6" y="4" width="1" height="1" fill="#FFE082" />
+    <Rect x="4" y="6" width="1" height="1" fill="#FFE082" />
+    <Rect x="6" y="9" width="1" height="1" fill="#FFE082" />
+  </Svg>
 );
+
 
 const WaterFlowerAnimation = () => {
   const [animationProgress] = useState(new Animated.Value(0));
@@ -39,7 +70,7 @@ const WaterFlowerAnimation = () => {
   useEffect(() => {
     // Create water drops with staggered animation
     const newDrops = Array(15).fill().map((_, i) => {
-      const anim = new Animated.Value(-20);
+      const anim = new Animated.Value(-height);
       animationsRef.current.push(anim);
       return {
         id: i,
@@ -57,19 +88,25 @@ const WaterFlowerAnimation = () => {
       easing: Easing.inOut(Easing.ease),
     }).start();
 
-    // Start individual drop animations
-    newDrops.forEach((drop, index) => {
-      Animated.loop(
-        Animated.timing(drop.animation, {
-          toValue: height + 20, // Ensure the drops fall off the screen
-          duration: 2000 + Math.random() * 1000,
-          delay: index * 200,
-          useNativeDriver: true,
-          easing: Easing.linear,
-        })
-      ).start();
-    });
-
+    Animated.parallel([
+      Animated.timing(animationProgress, {
+        toValue: 1,
+        duration: 3000,
+        useNativeDriver: true,
+        easing: Easing.inOut(Easing.ease),
+      }),
+      ...newDrops.map((drop, index) =>
+        Animated.loop(
+          Animated.timing(drop.animation, {
+            toValue: height,
+            duration: 3000 + Math.random() * 1000,
+            delay: index * 200, // Stagger the drops
+            useNativeDriver: true,
+            easing: Easing.linear,
+          })
+        )
+      ),
+    ]).start();
     // Cleanup function
     return () => {
       animationsRef.current.forEach(anim => anim.stopAnimation());
@@ -100,10 +137,11 @@ const WaterFlowerAnimation = () => {
   });
 
   return (
-    <LinearGradient
-      colors={['white', '#E8F5E9']}
-      style={styles.container}
-    >
+    <View style={styles.container}>
+      <LinearGradient
+        colors={['white', '#E8F5E9']}
+        style={StyleSheet.absoluteFillObject}
+      />
       <Animated.View style={[styles.content, { transform: [{ translateY: contentTranslate }] }]}>
         <View style={styles.cloudContainer}>
           <Cloud style={styles.cloud1} />
@@ -116,10 +154,13 @@ const WaterFlowerAnimation = () => {
         </View>
 
         {renderWaterDrops()}
+      </Animated.View>
 
+      {/* Animate the flower along with the content */}
+      <Animated.View style={[styles.pixelFlower, { transform: [{ translateY: contentTranslate }] }]}>
         <PixelFlower />
       </Animated.View>
-    </LinearGradient>
+    </View>
   );
 };
 
@@ -163,34 +204,13 @@ const styles = StyleSheet.create({
   },
   waterDrop: {
     position: 'absolute',
-    top: -20,
+    top: 0,
   },
   pixelFlower: {
     position: 'absolute',
-    bottom: '10%',
+    bottom: '15%', // Adjust this value as needed
     left: '50%',
-    marginLeft: -15,
-  },
-  flowerStem: {
-    width: 6,
-    height: 30,
-    backgroundColor: '#4CAF50',
-    marginLeft: 9,
-  },
-  flowerHead: {
-    width: 24,
-    height: 24,
-    backgroundColor: '#E91E63',
-    borderRadius: 4,
-  },
-  flowerLeaf: {
-    position: 'absolute',
-    width: 12,
-    height: 12,
-    backgroundColor: '#4CAF50',
-    transform: [{ rotate: '45deg' }],
-    top: 15,
-    left: -3,
+    marginLeft: -32, // Half of the SVG width to center it
   },
 });
 
