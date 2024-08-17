@@ -111,8 +111,8 @@ const memoryData = [
   },
 ];
 
-const HEADER_MAX_HEIGHT = 300; // Adjust this value based on your design
-const HEADER_MIN_HEIGHT = 50; // Height of the sticky header
+const HEADER_MAX_HEIGHT = 300;
+const HEADER_MIN_HEIGHT = 50;
 
 const UserProfilePage = () => {
   const [activeTab, setActiveTab] = useState("Garden");
@@ -224,7 +224,7 @@ const UserProfilePage = () => {
             style={styles.profileImage}
           />
           <Text style={styles.username}>Auri</Text>
-          <Text style={styles.joinDate}>Gardening since 10 August 2024</Text>
+          <Text style={styles.joinDate}>Gardening since 1 July 2024</Text>
         </Animated.View>
       </Animated.View>
 
@@ -298,11 +298,16 @@ const styles = StyleSheet.create({
     fontFamily: "MontserratBold",
     color: "#333",
     marginBottom: 5,
+    alignSelf: "flex-start",
+    marginTop: 15,
+    marginLeft: 50,
   },
   joinDate: {
     fontSize: 13,
     fontFamily: "Montserrat",
     color: "#999",
+    alignSelf: "flex-start",
+    marginLeft: 50,
   },
   tabContainer: {
     flexDirection: "row",
