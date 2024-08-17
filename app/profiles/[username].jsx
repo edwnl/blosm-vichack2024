@@ -10,7 +10,7 @@ import {
   Dimensions,
   Animated,
 } from "react-native";
-import { ArrowUpIcon } from "react-native-heroicons/outline";
+import { ArrowUpCircleIcon } from "react-native-heroicons/outline";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { width, height } = Dimensions.get("window");
@@ -18,94 +18,96 @@ const numRows = 2;
 const itemSize = (height - 500) / numRows;
 
 const flowerData = [
-  { id: "1", image: require("../../assets/images/flowers/flower1.png") },
-  { id: "2", image: require("../../assets/images/flowers/flower2.png") },
-  { id: "3", image: require("../../assets/images/flowers/flower3.png") },
-  { id: "4", image: require("../../assets/images/flowers/flower4.png") },
-  { id: "5", image: require("../../assets/images/flowers/flower1.png") },
-  { id: "6", image: require("../../assets/images/flowers/flower2.png") },
-  { id: "7", image: require("../../assets/images/flowers/flower3.png") },
-  { id: "8", image: require("../../assets/images/flowers/flower4.png") },
+  { id: "1", image: require("../../assets/images/flowers/flower1.svg") },
+  { id: "4", image: require("../../assets/images/flowers/flower2.svg") },
+  { id: "2", image: require("../../assets/images/flowers/flower3.svg") },
+  { id: "3", image: require("../../assets/images/flowers/flower4.svg") },
+  { id: "5", image: require("../../assets/images/flowers/flower5.svg") },
+  { id: "6", image: require("../../assets/images/flowers/flower6.svg") },
+  { id: "7", image: require("../../assets/images/flowers/flower7.svg") },
+  { id: "8", image: require("../../assets/images/flowers/flower8.svg") },
 ];
 
 const memoryData = [
   {
     id: "1",
     activity: "Got lunch at coffee shop",
-    date: "12 August 2024",
-    flower: require("../../assets/images/flowers/flower2.png"),
+    date: "29 August 2024",
+    flower: require("../../assets/images/flowers/flower1.svg"),
   },
   {
     id: "2",
     activity: "Went shopping together",
-    date: "10 August 2024",
-    flower: require("../../assets/images/flowers/flower1.png"),
-    xp: "+12 xp",
+    date: "22 August 2024",
+    flower: require("../../assets/images/flowers/flower2.svg"),
+    xp: "+5 xp",
   },
   {
     id: "3",
-    activity: "Got lunch at coffee shop",
-    date: "12 August 2024",
-    flower: require("../../assets/images/flowers/flower2.png"),
+    activity: "Went shopping together",
+    date: "20 August 2024",
+    flower: require("../../assets/images/flowers/flower3.svg"),
+    xp: "+7 xp",
   },
   {
     id: "4",
-    activity: "Went shopping together",
-    date: "10 August 2024",
-    flower: require("../../assets/images/flowers/flower1.png"),
+    activity: "Went to the gym",
+    date: "18 August 2024",
+    flower: require("../../assets/images/flowers/flower4.svg"),
     xp: "+12 xp",
   },
   {
     id: "5",
     activity: "Got lunch at coffee shop",
-    date: "12 August 2024",
-    flower: require("../../assets/images/flowers/flower2.png"),
+    date: "14 August 2024",
+    flower: require("../../assets/images/flowers/flower5.svg"),
   },
   {
     id: "6",
-    activity: "Went shopping together",
-    date: "10 August 2024",
-    flower: require("../../assets/images/flowers/flower1.png"),
-    xp: "+12 xp",
+    activity: "Studied together",
+    date: "12 August 2024",
+    flower: require("../../assets/images/flowers/flower6.svg"),
+    xp: "+7 xp",
   },
   {
     id: "7",
-    activity: "Got lunch at coffee shop",
-    date: "12 August 2024",
-    flower: require("../../assets/images/flowers/flower2.png"),
+    activity: "Rock Climbing",
+    date: "10 August 2024",
+    flower: require("../../assets/images/flowers/flower7.svg"),
   },
   {
     id: "8",
-    activity: "Went shopping together",
-    date: "10 August 2024",
-    flower: require("../../assets/images/flowers/flower1.png"),
-    xp: "+12 xp",
+    activity: "Went out for lunch",
+    date: "5 August 2024",
+    flower: require("../../assets/images/flowers/flower2.svg"),
+    xp: "+4 xp",
   },
   {
     id: "9",
-    activity: "Got lunch at coffee shop",
-    date: "12 August 2024",
-    flower: require("../../assets/images/flowers/flower2.png"),
+    activity: "Grabbed dinner together",
+    date: "1 August 2024",
+    flower: require("../../assets/images/flowers/flower4.svg"),
   },
   {
     id: "10",
-    activity: "Went shopping together",
-    date: "10 August 2024",
-    flower: require("../../assets/images/flowers/flower1.png"),
-    xp: "+12 xp",
+    activity: "Went to the movies",
+    date: "20 July 2024",
+    flower: require("../../assets/images/flowers/flower8.svg"),
+    xp: "+20 xp",
   },
   {
     id: "11",
-    activity: "Got lunch at coffee shop",
-    date: "12 August 2024",
-    flower: require("../../assets/images/flowers/flower2.png"),
+    activity: "Got breakfast together",
+    date: "12 July 2024",
+    flower: require("../../assets/images/flowers/flower5.svg"),
+    xp: "+15 xp",
   },
   {
     id: "12",
-    activity: "Went shopping together",
-    date: "10 August 2024",
-    flower: require("../../assets/images/flowers/flower1.png"),
-    xp: "+12 xp",
+    activity: "Went to the gym together",
+    date: "1 July 2024",
+    flower: require("../../assets/images/flowers/flower6.svg"),
+    xp: "+10 xp",
   },
 ];
 
@@ -155,7 +157,7 @@ const UserProfilePage = () => {
           <Text style={styles.memoryXP}>{item.xp}</Text>
         ) : (
           <View style={styles.addXPButton}>
-            <ArrowUpIcon size={10} color="#000" />
+            <ArrowUpCircleIcon size={22} fontWeight={600} color="#000" />
           </View>
         )}
       </View>
@@ -387,17 +389,12 @@ const styles = StyleSheet.create({
     padding: 2,
   },
   memoryXP: {
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: "Montserrat",
-    color: "#000",
+    color: "#999",
     marginRight: 10,
   },
   addXPButton: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#000",
     justifyContent: "center",
     alignItems: "center",
     marginRight: 10,
