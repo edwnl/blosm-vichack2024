@@ -11,13 +11,19 @@ import {
   Modal,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { UserIcon, XMarkIcon } from "react-native-heroicons/outline";
+import {
+  UserIcon,
+  XMarkIcon,
+  MagnifyingGlassIcon,
+} from "react-native-heroicons/outline";
 import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
 import Navbar from "../../components/Navbar";
 
 const { width } = Dimensions.get("window");
-const cardSize = (width - 48) / 2; // 16px padding on each side, 16px gap between cards
+const padding = 16;
+const gap = 16;
+const cardSize = (width - 5 * padding - gap) / 2;
 
 // Dummy data for friends
 const friendsData = [
@@ -52,14 +58,16 @@ const friendsData = [
 ];
 
 const FriendItem = ({ item, onPress }) => (
-  <TouchableOpacity
-    style={styles.friendItem}
-    onPress={() => onPress(item.name)}
-  >
-    <Image source={item.flowerImage} style={styles.flowerImage} />
+  <View style={styles.friendItemContainer}>
+    <TouchableOpacity
+      style={styles.friendItem}
+      onPress={() => onPress(item.name)}
+    >
+      <Image source={item.flowerImage} style={styles.flowerImage} />
+    </TouchableOpacity>
     <Text style={styles.flowerType}>{item.flowerType}</Text>
     <Text style={styles.lastSeen}>{item.lastSeen}</Text>
-  </TouchableOpacity>
+  </View>
 );
 
 export default function Dashboard() {
@@ -113,6 +121,9 @@ export default function Dashboard() {
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
+          <TouchableOpacity style={styles.searchIcon}>
+            <MagnifyingGlassIcon size={20} color="#5E9020" />
+          </TouchableOpacity>
         </View>
         <FlatList
           data={friendsData}
@@ -122,6 +133,7 @@ export default function Dashboard() {
           keyExtractor={(item) => item.id}
           numColumns={2}
           columnWrapperStyle={styles.row}
+          contentContainerStyle={styles.flatList}
         />
         <TouchableOpacity
           style={styles.addButton}
@@ -192,6 +204,22 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
     paddingTop: 48,
+    paddingHorizontal: padding,
+  },
+  row: {
+    justifyContent: "space-between",
+  },
+  friendItemContainer: {
+    width: cardSize,
+    marginBottom: 16,
+  },
+  friendItem: {
+    width: "100%",
+    aspectRatio: 1,
+    backgroundColor: "#F8F8F8",
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
   },
   title: {
     fontSize: 32,
@@ -205,33 +233,30 @@ const styles = StyleSheet.create({
     fontFamily: "MontserratBold",
   },
   searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 16,
     paddingBottom: 16,
+    position: "relative", // Added this line
   },
   searchInput: {
+    flex: 1,
     borderRadius: 8,
     padding: 12,
+    paddingRight: 40, // Added this line to make space for the icon
     fontFamily: "Montserrat",
     borderColor: "#EDEDED",
     borderWidth: 2,
   },
-  row: {
-    justifyContent: "space-between",
-  },
-  friendItem: {
-    width: cardSize,
-    height: cardSize,
-    backgroundColor: "#F0F0F0",
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 16,
-    alignItems: "center",
-    justifyContent: "center",
+  searchIcon: {
+    position: "absolute",
+    right: 12,
+    top: "50%", // Added this line
+    transform: [{ translateY: -10 }], // Added this line (half the icon size)
   },
   flowerImage: {
     width: cardSize * 0.6,
     height: cardSize * 0.6,
-    marginBottom: 8,
     resizeMode: "contain",
   },
   flowerType: {
@@ -239,11 +264,14 @@ const styles = StyleSheet.create({
     fontFamily: "MontserratBold",
     color: "#333",
     marginBottom: 4,
+    marginTop: 8,
+    alignSelf: "flex-start", // Added this line
   },
   lastSeen: {
     fontSize: 12,
     fontFamily: "Montserrat",
     color: "#666",
+    alignSelf: "flex-start", // Added this line
   },
   addButton: {
     backgroundColor: "#5E9020",
@@ -327,5 +355,8 @@ const styles = StyleSheet.create({
   },
   errorMessage: {
     color: "#F44336",
+  },
+  flatList: {
+    paddingTop: 16,
   },
 });

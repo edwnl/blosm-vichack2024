@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 32,
+    paddingHorizontal: 8,
   },
   logo: {
     color: "#5E9020",
