@@ -1,9 +1,16 @@
-import { Stack } from "expo-router";
+import React, { useEffect, useRef } from "react";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Dimensions,
+  Animated,
+} from "react-native";
+import { Slot, usePathname } from "expo-router";
 import { useFonts } from "expo-font";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import { View } from "react-native";
-import Navbar from "../components/Navbar";
-import "../global.css";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+const { width, height } = Dimensions.get("window");
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -12,20 +19,43 @@ export default function RootLayout() {
     MontserratBold: require("../assets/fonts/Montserrat-Bold.ttf"),
   });
 
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const pathname = usePathname();
+
+  useEffect(() => {
+    fadeAnim.setValue(0); // Reset the animation value
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 200, // Slightly longer duration for a smoother effect
+      useNativeDriver: true,
+    }).start();
+  }, [pathname]);
+
   if (!fontsLoaded) {
     return null;
   }
 
   return (
-    <SafeAreaProvider>
-      <View className="flex-1">
-        <Navbar />
-        <Stack
-          screenOptions={{
-            headerShown: false,
-          }}
-        />
-      </View>
-    </SafeAreaProvider>
+    <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollView}>
+        <Animated.View style={[styles.content, { opacity: fadeAnim }]}>
+          <Slot />
+        </Animated.View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "white",
+  },
+  scrollView: {
+    flexGrow: 1,
+  },
+  content: {
+    flex: 1,
+    padding: width * 0.05,
+  },
+});

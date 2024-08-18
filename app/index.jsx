@@ -6,12 +6,10 @@ import {
   TouchableOpacity,
   StyleSheet,
   Animated,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { UserIcon } from "react-native-heroicons/outline";
+import Navbar from "../components/Navbar";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
@@ -91,73 +89,69 @@ const LoginPage = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}
-    >
-      <View style={styles.container}>
-        <View style={styles.contentContainer}>
-          <Text style={styles.welcomeText}>
-            Welcome to{"\n"}your <Text style={styles.gardenText}>garden</Text>.
-          </Text>
-          <Animated.View style={{ opacity: fadeAnim }}>
-            <Text style={styles.supportingText}>{getSupportingText()}</Text>
-            <View style={styles.inputContainer}>
-              {stage === "username" ? (
-                <TextInput
-                  style={styles.input}
-                  placeholder="Username"
-                  value={username}
-                  onChangeText={(text) => {
-                    setUsername(text);
-                    setError(""); // Clear error when user types
-                  }}
-                  onSubmitEditing={handleSubmit}
-                />
-              ) : (
-                <TextInput
-                  style={styles.input}
-                  placeholder="Password"
-                  secureTextEntry
-                  value={password}
-                  onChangeText={(text) => {
-                    setPassword(text);
-                    setError(""); // Clear error when user types
-                  }}
-                  onSubmitEditing={handleSubmit}
-                />
-              )}
-            </View>
-            {error ? <Text style={styles.errorText}>{error}</Text> : null}
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.button,
-                  (!validateUsername(username) && stage === "username") ||
-                  (!validatePassword(password) && stage !== "username")
-                    ? styles.buttonDisabled
-                    : {},
-                ]}
-                onPress={handleSubmit}
-                disabled={
-                  (!validateUsername(username) && stage === "username") ||
-                  (!validatePassword(password) && stage !== "username")
-                }
-              >
-                <UserIcon size={15} color="white" />
-                <Text style={styles.buttonText}>
-                  {stage === "username"
-                    ? "Next"
-                    : stage === "newPassword"
-                      ? "Sign Up"
-                      : "Login"}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </Animated.View>
-        </View>
+    <>
+      <Navbar />
+      <View style={styles.contentContainer}>
+        <Text style={styles.welcomeText}>
+          Welcome to{"\n"}your <Text style={styles.gardenText}>garden</Text>.
+        </Text>
+        <Animated.View style={{ opacity: fadeAnim }}>
+          <Text style={styles.supportingText}>{getSupportingText()}</Text>
+          <View style={styles.inputContainer}>
+            {stage === "username" ? (
+              <TextInput
+                style={styles.input}
+                placeholder="Username"
+                value={username}
+                onChangeText={(text) => {
+                  setUsername(text);
+                  setError(""); // Clear error when user types
+                }}
+                onSubmitEditing={handleSubmit}
+              />
+            ) : (
+              <TextInput
+                style={styles.input}
+                placeholder="Password"
+                secureTextEntry
+                value={password}
+                onChangeText={(text) => {
+                  setPassword(text);
+                  setError(""); // Clear error when user types
+                }}
+                onSubmitEditing={handleSubmit}
+              />
+            )}
+          </View>
+          {error ? <Text style={styles.errorText}>{error}</Text> : null}
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[
+                styles.button,
+                (!validateUsername(username) && stage === "username") ||
+                (!validatePassword(password) && stage !== "username")
+                  ? styles.buttonDisabled
+                  : {},
+              ]}
+              onPress={handleSubmit}
+              disabled={
+                (!validateUsername(username) && stage === "username") ||
+                (!validatePassword(password) && stage !== "username")
+              }
+            >
+              <UserIcon size={15} color="white" />
+              <Text style={styles.buttonText}>
+                {stage === "username"
+                  ? "Next"
+                  : stage === "newPassword"
+                    ? "Sign Up"
+                    : "Login"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
       </View>
-    </KeyboardAvoidingView>
+    </>
   );
 };
 const styles = StyleSheet.create({
