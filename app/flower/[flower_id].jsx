@@ -30,16 +30,16 @@ const FlowerDetailPage = () => {
 
   // State for modal and flower name
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [flowerName, setFlowerName] = useState("Flower Name");
+  const [flowerName, setFlowerName] = useState("Sunflower");
   const [tempFlowerName, setTempFlowerName] = useState("");
 
   // Dummy data
   const friendData = {
-    friendName: "Amy",
-    level: 7,
+    friendName: "Alex",
+    level: 1,
     progress: 10,
-    daysGrown: 4,
-    wiltsIn: 72,
+    daysGrown: 7,
+    wiltsIn: 2,
   };
 
   const CircularProgress = ({ progress }) => {

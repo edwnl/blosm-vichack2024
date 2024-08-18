@@ -33,10 +33,10 @@ const cardSize = (width - 5 * padding - gap) / 2;
 const friendsData = [
   {
     id: "1",
-    name: "Amy",
+    name: "Alex",
     flowerType: "Sunflower",
     FlowerComponent: Flower1,
-    lastSeen: "with Amy",
+    lastSeen: "with Alex",
   },
   {
     id: "2",

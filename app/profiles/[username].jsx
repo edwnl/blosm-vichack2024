@@ -57,8 +57,8 @@ const flowerData = [
 const memoryData = [
   {
     id: "1",
-    activity: "Got lunch at coffee shop",
-    date: "29 August 2024",
+    activity: "Met up in the library",
+    date: "18 August 2024",
     FlowerComponent: Flower1,
   },
   {
@@ -255,7 +255,7 @@ const UserProfilePage = () => {
             style={[styles.profileInfo, { opacity: headerOpacity }]}
           >
             <ProfilePicture width={100} height={100} />
-            <Text style={styles.username}>Auri</Text>
+            <Text style={styles.username}>Amy</Text>
             <Text style={styles.joinDate}>Gardening since 1 July 2024</Text>
           </Animated.View>
         </Animated.View>
