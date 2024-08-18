@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  Image,
   TouchableOpacity,
   StyleSheet,
   Dimensions,
@@ -21,10 +20,11 @@ import {
 } from "react-native-heroicons/outline";
 import Svg, { Circle } from "react-native-svg";
 import { BlurView } from "expo-blur";
+import Flower1 from "../../assets/images/flowers/Flower1";
 
 const { width, height } = Dimensions.get("window");
 
-const FriendProfilePage = () => {
+const FlowerDetailPage = () => {
   const router = useRouter();
   const { username } = useLocalSearchParams();
 
@@ -55,7 +55,7 @@ const FriendProfilePage = () => {
           width={size}
           height={size}
           style={{
-            marginBottom: 10,
+            marginBottom: 2,
           }}
         >
           <Circle
@@ -104,11 +104,7 @@ const FriendProfilePage = () => {
 
       <View style={styles.contentContainer}>
         <View style={styles.imageContainer}>
-          <Image
-            source={require("../../assets/images/flowers/flower1.png")}
-            style={styles.flowerImage}
-            resizeMode="contain"
-          />
+          <Flower1 width={width * 0.4} height={width * 0.4} />
         </View>
 
         <View style={styles.nameContainer}>
@@ -158,7 +154,10 @@ const FriendProfilePage = () => {
           </View>
         </View>
 
-        <TouchableOpacity style={styles.waterButton}>
+        <TouchableOpacity
+          onPress={() => router.replace("/watering")}
+          style={styles.waterButton}
+        >
           <FaceSmileIcon size={20} color="white" />
           <Text style={styles.waterButtonText}>Water now!</Text>
         </TouchableOpacity>
@@ -244,8 +243,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   flowerImage: {
-    width: "60%",
-    height: "60%",
+    width: "20%",
+    height: "20%",
   },
   nameContainer: {
     flexDirection: "row",
@@ -310,14 +309,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#F8F8F8",
     padding: 15,
     borderRadius: 10,
-    marginBottom: 5,
-    height: 85,
+    height: 75,
   },
   statTitle: {
     fontSize: 14,
     color: "#666",
     fontFamily: "Montserrat",
-    marginBottom: 5,
   },
   progressContainer: {
     alignItems: "center",
@@ -414,4 +411,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FriendProfilePage;
+export default FlowerDetailPage;

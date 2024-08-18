@@ -19,41 +19,45 @@ import {
 import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
 import Navbar from "../../components/Navbar";
+import Flower1 from "../../assets/images/flowers/Flower1";
+import Flower2 from "../../assets/images/flowers/Flower2";
+import Flower3 from "../../assets/images/flowers/Flower3";
+import Flower4 from "../../assets/images/flowers/Flower4";
 
 const { width } = Dimensions.get("window");
 const padding = 16;
 const gap = 16;
 const cardSize = (width - 5 * padding - gap) / 2;
 
-// Dummy data for friends
+// Updated friendsData to use SVG components
 const friendsData = [
   {
     id: "1",
     name: "Amy",
     flowerType: "Sunflower",
-    flowerImage: require("../../assets/images/flowers/flower1.svg"),
+    FlowerComponent: Flower1,
     lastSeen: "with Amy",
   },
   {
     id: "2",
     name: "Auri",
     flowerType: "Rose",
-    flowerImage: require("../../assets/images/flowers/flower2.svg"),
+    FlowerComponent: Flower2,
     lastSeen: "with Auri",
   },
   {
     id: "3",
     name: "Jack",
     flowerType: "Tulip",
-    flowerImage: require("../../assets/images/flowers/flower3.svg"),
-    lastSeen: "last seen",
+    FlowerComponent: Flower3,
+    lastSeen: "with Edwin",
   },
   {
     id: "4",
     name: "Thomas",
     flowerType: "Daisy",
-    flowerImage: require("../../assets/images/flowers/flower4.svg"),
-    lastSeen: "adventure",
+    FlowerComponent: Flower4,
+    lastSeen: "with Eddie",
   },
 ];
 
@@ -63,7 +67,7 @@ const FriendItem = ({ item, onPress }) => (
       style={styles.friendItem}
       onPress={() => onPress(item.name)}
     >
-      <Image source={item.flowerImage} style={styles.flowerImage} />
+      <item.FlowerComponent width={60} height={60} />
     </TouchableOpacity>
     <Text style={styles.flowerType}>{item.flowerType}</Text>
     <Text style={styles.lastSeen}>{item.lastSeen}</Text>
@@ -103,7 +107,7 @@ export default function Dashboard() {
   };
 
   const navigateToFriendDetail = (name) => {
-    router.push(`/friend/${name}`);
+    router.push(`/flower/asdasdasd`);
   };
 
   return (
@@ -135,13 +139,6 @@ export default function Dashboard() {
           columnWrapperStyle={styles.row}
           contentContainerStyle={styles.flatList}
         />
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() => setIsModalVisible(true)}
-        >
-          <UserIcon size={20} color="white" />
-          <Text style={styles.addButtonText}>Add Friends</Text>
-        </TouchableOpacity>
 
         <Modal
           visible={isModalVisible}
@@ -195,6 +192,15 @@ export default function Dashboard() {
           </BlurView>
         </Modal>
       </View>
+      <View style={styles.addButtonContainer}>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => setIsModalVisible(true)}
+        >
+          <UserIcon size={20} color="white" />
+          <Text style={styles.addButtonText}>Add Friends</Text>
+        </TouchableOpacity>
+      </View>
     </>
   );
 }
@@ -203,8 +209,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-    paddingTop: 48,
+    paddingTop: 32,
     paddingHorizontal: padding,
+    paddingBottom: 80, // Add padding to the bottom to account for the button
   },
   row: {
     justifyContent: "space-between",
@@ -235,8 +242,8 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 16,
-    paddingBottom: 16,
+    marginBottom: 8,
+    paddingBottom: 8,
     position: "relative", // Added this line
   },
   searchInput: {
@@ -275,12 +282,19 @@ const styles = StyleSheet.create({
   },
   addButton: {
     backgroundColor: "#5E9020",
-    padding: 16,
-    borderRadius: 8,
-    alignItems: "center",
-    marginTop: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 25,
     flexDirection: "row",
+    alignItems: "center",
     justifyContent: "center",
+  },
+  addButtonContainer: {
+    position: "absolute",
+    bottom: 50,
+    left: 0,
+    right: 0,
+    alignItems: "center",
   },
   addButtonText: {
     color: "white",
