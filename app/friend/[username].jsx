@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-    padding: width * 0.05,
+    padding: width * 0.1,
   },
   backButton: {
     flexDirection: "row",
@@ -221,6 +221,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 12,
     alignSelf: "flex-start",
+    marginLeft: 10,
   },
   backButtonText: {
     marginLeft: 5,
@@ -231,10 +232,10 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     alignItems: "flex-start",
+    padding: 10,
   },
   imageContainer: {
-    width: width * 0.9,
-    height: width * 0.9,
+    width: width * 0.85,
     aspectRatio: 1,
     backgroundColor: "#F8F8F8",
     justifyContent: "center",
@@ -309,7 +310,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F8F8F8",
     padding: 15,
     borderRadius: 10,
-    marginBottom: 15,
+    marginBottom: 5,
     height: 85,
   },
   statTitle: {
