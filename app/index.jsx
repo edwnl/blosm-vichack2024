@@ -10,6 +10,8 @@ import {
 import { useRouter } from "expo-router";
 import { UserIcon } from "react-native-heroicons/outline";
 import Navbar from "../components/Navbar";
+import { LogBox } from "react-native";
+LogBox.ignoreAllLogs(); //Ignore all log notifications
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
@@ -20,11 +22,11 @@ const LoginPage = () => {
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
   const validateUsername = (username) => {
-    return username.length >= 3;
+    return true;
   };
 
   const validatePassword = (password) => {
-    return password.length >= 6;
+    return true;
   };
 
   const handleUsernameSubmit = () => {
