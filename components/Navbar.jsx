@@ -1,25 +1,13 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Modal, StyleSheet } from "react-native";
 import { Link, useRouter } from "expo-router";
-import { Bars3Icon, XMarkIcon } from "react-native-heroicons/outline";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
-
-const routes = [
-  { name: "Home", path: "/" },
-  { name: "Profile", path: "/profiles/auri" },
-  { name: "Friends", path: "/friends" },
-  { name: "Friends", path: "/friends" },
-  { name: "Water", path: "/watering" },
-];
+import { UserCircleIcon } from "react-native-heroicons/solid";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const router = useRouter();
 
-  const toggleMenu = () => setMenuOpen(!menuOpen);
+  const toggleMenu = () => router.replace("/profiles/asd");
 
   const navigateTo = (path) => {
     router.replace(path);
@@ -29,41 +17,15 @@ export default function Navbar() {
   return (
     <View style={styles.container}>
       <View style={styles.navbar}>
-        <Link href="/" asChild>
+        <Link href="/dashboard" asChild>
           <TouchableOpacity>
             <Text style={styles.logo}>BLOSM</Text>
           </TouchableOpacity>
         </Link>
         <TouchableOpacity onPress={toggleMenu} style={styles.menuButton}>
-          <Bars3Icon size={24} color="#5E9020" />
+          <UserCircleIcon size={24} color="#5E9020" />
         </TouchableOpacity>
       </View>
-
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={menuOpen}
-        onRequestClose={toggleMenu}
-      >
-        <View style={[styles.modalContainer]}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <TouchableOpacity onPress={toggleMenu} style={styles.closeButton}>
-                <XMarkIcon size={24} color="#5E9020" />
-              </TouchableOpacity>
-            </View>
-            {routes.map((route) => (
-              <TouchableOpacity
-                key={route.path}
-                onPress={() => navigateTo(route.path)}
-                style={styles.menuItem}
-              >
-                <Text style={styles.menuItemText}>{route.name}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 }

@@ -2,30 +2,56 @@ import React, { useState, useRef } from "react";
 import {
   View,
   Text,
-  Image,
   StyleSheet,
   TouchableOpacity,
   FlatList,
-  SafeAreaView,
   Dimensions,
+  Modal,
+  Image,
   Animated,
 } from "react-native";
 import { ArrowUpCircleIcon } from "react-native-heroicons/outline";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Navbar from "../../components/Navbar";
+import { BlurView } from "expo-blur";
+
+// Import SVG components
+import Flower1 from "../../assets/images/flowers/Flower1";
+import Flower2 from "../../assets/images/flowers/Flower2";
+import Flower3 from "../../assets/images/flowers/Flower3";
+import Flower4 from "../../assets/images/flowers/Flower4";
+import Flower5 from "../../assets/images/flowers/Flower5";
+import Flower6 from "../../assets/images/flowers/Flower6";
+import Flower7 from "../../assets/images/flowers/Flower7";
+import Flower8 from "../../assets/images/flowers/Flower8";
+import ProfilePicture from "../../assets/images/ProfilePicture";
+
+import hangoutImage from "../../assets/images/hangout.png";
 
 const { width, height } = Dimensions.get("window");
 const numRows = 2;
-const itemSize = (height - 500) / numRows;
+const itemSize = (height - 550) / numRows;
+
+const flowerComponents = {
+  Flower1,
+  Flower2,
+  Flower3,
+  Flower4,
+  Flower5,
+  Flower6,
+  Flower7,
+  Flower8,
+};
 
 const flowerData = [
-  { id: "1", image: require("../../assets/images/flowers/flower1.svg") },
-  { id: "4", image: require("../../assets/images/flowers/flower2.svg") },
-  { id: "2", image: require("../../assets/images/flowers/flower3.svg") },
-  { id: "3", image: require("../../assets/images/flowers/flower4.svg") },
-  { id: "5", image: require("../../assets/images/flowers/flower5.svg") },
-  { id: "6", image: require("../../assets/images/flowers/flower6.svg") },
-  { id: "7", image: require("../../assets/images/flowers/flower7.svg") },
-  { id: "8", image: require("../../assets/images/flowers/flower8.svg") },
+  { id: "1", FlowerComponent: Flower1 },
+  { id: "4", FlowerComponent: Flower2 },
+  { id: "2", FlowerComponent: Flower3 },
+  { id: "3", FlowerComponent: Flower4 },
+  { id: "5", FlowerComponent: Flower5 },
+  { id: "6", FlowerComponent: Flower6 },
+  { id: "7", FlowerComponent: Flower7 },
+  { id: "8", FlowerComponent: Flower8 },
 ];
 
 const memoryData = [
@@ -33,80 +59,80 @@ const memoryData = [
     id: "1",
     activity: "Got lunch at coffee shop",
     date: "29 August 2024",
-    flower: require("../../assets/images/flowers/flower1.svg"),
+    FlowerComponent: Flower1,
   },
   {
     id: "2",
     activity: "Went shopping together",
     date: "22 August 2024",
-    flower: require("../../assets/images/flowers/flower2.svg"),
+    FlowerComponent: Flower2,
     xp: "+5 xp",
   },
   {
     id: "3",
     activity: "Went shopping together",
     date: "20 August 2024",
-    flower: require("../../assets/images/flowers/flower3.svg"),
+    FlowerComponent: Flower3,
     xp: "+7 xp",
   },
   {
     id: "4",
     activity: "Went to the gym",
     date: "18 August 2024",
-    flower: require("../../assets/images/flowers/flower4.svg"),
+    FlowerComponent: Flower4,
     xp: "+12 xp",
   },
   {
     id: "5",
     activity: "Got lunch at coffee shop",
     date: "14 August 2024",
-    flower: require("../../assets/images/flowers/flower5.svg"),
+    FlowerComponent: Flower5,
   },
   {
     id: "6",
     activity: "Studied together",
     date: "12 August 2024",
-    flower: require("../../assets/images/flowers/flower6.svg"),
+    FlowerComponent: Flower6,
     xp: "+7 xp",
   },
   {
     id: "7",
     activity: "Rock Climbing",
     date: "10 August 2024",
-    flower: require("../../assets/images/flowers/flower7.svg"),
+    FlowerComponent: Flower7,
   },
   {
     id: "8",
     activity: "Went out for lunch",
     date: "5 August 2024",
-    flower: require("../../assets/images/flowers/flower2.svg"),
+    FlowerComponent: Flower2,
     xp: "+4 xp",
   },
   {
     id: "9",
     activity: "Grabbed dinner together",
     date: "1 August 2024",
-    flower: require("../../assets/images/flowers/flower4.svg"),
+    FlowerComponent: Flower4,
   },
   {
     id: "10",
     activity: "Went to the movies",
     date: "20 July 2024",
-    flower: require("../../assets/images/flowers/flower8.svg"),
+    FlowerComponent: Flower8,
     xp: "+20 xp",
   },
   {
     id: "11",
     activity: "Got breakfast together",
     date: "12 July 2024",
-    flower: require("../../assets/images/flowers/flower5.svg"),
+    FlowerComponent: Flower5,
     xp: "+15 xp",
   },
   {
     id: "12",
     activity: "Went to the gym together",
     date: "1 July 2024",
-    flower: require("../../assets/images/flowers/flower6.svg"),
+    FlowerComponent: Flower6,
     xp: "+10 xp",
   },
 ];
@@ -116,6 +142,7 @@ const HEADER_MIN_HEIGHT = 50;
 
 const UserProfilePage = () => {
   const [activeTab, setActiveTab] = useState("Garden");
+  const [modalVisible, setModalVisible] = useState(false);
   const scrollY = useRef(new Animated.Value(0)).current;
   const insets = useSafeAreaInsets();
 
@@ -136,7 +163,11 @@ const UserProfilePage = () => {
       {item.map((flower) => (
         <TouchableOpacity key={flower.id}>
           <View key={flower.id} style={styles.flowerItem}>
-            <Image source={flower.image} style={styles.flowerImage} />
+            <flower.FlowerComponent
+              style={styles.flowerImage}
+              width={80}
+              height={80}
+            />
           </View>
         </TouchableOpacity>
       ))}
@@ -144,10 +175,10 @@ const UserProfilePage = () => {
   );
 
   const renderMemoryItem = ({ item }) => (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={() => setModalVisible(true)}>
       <View style={styles.memoryItem}>
         <View style={styles.memoryFlowerContainer}>
-          <Image source={item.flower} style={styles.memoryFlower} />
+          <item.FlowerComponent width={40} height={40} />
         </View>
         <View style={styles.memoryContent}>
           <Text style={styles.memoryActivity}>{item.activity}</Text>
@@ -171,6 +202,7 @@ const UserProfilePage = () => {
     }
     return columns;
   };
+
   const renderContent = () => {
     if (activeTab === "Garden") {
       return (
@@ -197,74 +229,93 @@ const UserProfilePage = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Animated.ScrollView
-        scrollEventThrottle={16}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: false },
-        )}
-        contentContainerStyle={{ paddingTop: HEADER_MAX_HEIGHT }}
-      >
-        {renderContent()}
-      </Animated.ScrollView>
+    <>
+      <Navbar />
+      <View style={styles.container}>
+        <Animated.ScrollView
+          scrollEventThrottle={16}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            { useNativeDriver: false },
+          )}
+          contentContainerStyle={{ paddingTop: HEADER_MAX_HEIGHT }}
+        >
+          {renderContent()}
+        </Animated.ScrollView>
 
-      <Animated.View
-        style={[
-          styles.header,
-          {
-            height: headerHeight,
-            paddingTop: insets.top,
-          },
-        ]}
-      >
-        <Animated.View style={[styles.profileInfo, { opacity: headerOpacity }]}>
-          <Image
-            source={require("../../assets/images/creeper.png")}
-            style={styles.profileImage}
-          />
-          <Text style={styles.username}>Auri</Text>
-          <Text style={styles.joinDate}>Gardening since 1 July 2024</Text>
+        <Animated.View
+          style={[
+            styles.header,
+            {
+              height: headerHeight,
+            },
+          ]}
+        >
+          <Animated.View
+            style={[styles.profileInfo, { opacity: headerOpacity }]}
+          >
+            <ProfilePicture width={100} height={100} />
+            <Text style={styles.username}>Auri</Text>
+            <Text style={styles.joinDate}>Gardening since 1 July 2024</Text>
+          </Animated.View>
         </Animated.View>
-      </Animated.View>
 
-      <Animated.View
-        style={[
-          styles.tabContainer,
-          {
-            top: Animated.add(headerHeight, insets.top),
-            paddingTop: 0,
-          },
-        ]}
+        <Animated.View
+          style={[
+            styles.tabContainer,
+            {
+              top: headerHeight,
+              paddingTop: 0,
+            },
+          ]}
+        >
+          <TouchableOpacity
+            style={[styles.tab, activeTab === "Garden" && styles.activeTab]}
+            onPress={() => setActiveTab("Garden")}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === "Garden" && styles.activeTabText,
+              ]}
+            >
+              Garden
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === "Memories" && styles.activeTab]}
+            onPress={() => setActiveTab("Memories")}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === "Memories" && styles.activeTabText,
+              ]}
+            >
+              Memories
+            </Text>
+          </TouchableOpacity>
+        </Animated.View>
+      </View>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
       >
-        <TouchableOpacity
-          style={[styles.tab, activeTab === "Garden" && styles.activeTab]}
-          onPress={() => setActiveTab("Garden")}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === "Garden" && styles.activeTabText,
-            ]}
+        <BlurView intensity={10} style={styles.blurContainer}>
+          <TouchableOpacity
+            style={styles.modalContainer}
+            activeOpacity={1}
+            onPress={() => setModalVisible(false)}
           >
-            Garden
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === "Memories" && styles.activeTab]}
-          onPress={() => setActiveTab("Memories")}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === "Memories" && styles.activeTabText,
-            ]}
-          >
-            Memories
-          </Text>
-        </TouchableOpacity>
-      </Animated.View>
-    </View>
+            <View style={styles.imageContainer}>
+              <Image source={hangoutImage} style={styles.hangoutImage} />
+            </View>
+          </TouchableOpacity>
+        </BlurView>
+      </Modal>
+    </>
   );
 };
 
@@ -298,16 +349,14 @@ const styles = StyleSheet.create({
     fontFamily: "MontserratBold",
     color: "#333",
     marginBottom: 5,
-    alignSelf: "flex-start",
+    alignSelf: "center",
     marginTop: 15,
-    marginLeft: 50,
   },
   joinDate: {
     fontSize: 13,
     fontFamily: "Montserrat",
     color: "#999",
-    alignSelf: "flex-start",
-    marginLeft: 50,
+    alignSelf: "center",
   },
   tabContainer: {
     flexDirection: "row",
@@ -329,7 +378,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#5E9020",
   },
   tabText: {
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: "Montserrat",
     color: "#666",
   },
@@ -338,7 +387,7 @@ const styles = StyleSheet.create({
     fontFamily: "MontserratBold",
   },
   flowerList: {
-    marginTop: 16,
+    marginTop: 0,
   },
   flowerGrid: {
     paddingHorizontal: 7,
@@ -353,13 +402,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     margin: 8,
   },
-  flowerImage: {
-    width: "60%",
-    height: "60%",
-    resizeMode: "contain",
+  memoryFlowerContainer: {
+    width: 50,
+    height: 50,
+    backgroundColor: "#F8F8F8",
+    borderRadius: 10,
+    marginRight: 25,
+    justifyContent: "center",
+    alignItems: "center",
   },
   memoriesList: {
-    marginTop: 50,
+    marginTop: 60,
   },
   memoryItem: {
     flexDirection: "row",
@@ -367,15 +420,6 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 16,
   },
-  memoryFlowerContainer: {
-    width: 50,
-    height: 50,
-    backgroundColor: "#F8F8F8",
-    borderRadius: 10,
-    marginRight: 25,
-    marginLeft: 10,
-  },
-  memoryFlower: { width: 30, height: 30, margin: "auto" },
   memoryContent: {
     flex: 1,
   },
@@ -397,12 +441,33 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontFamily: "Montserrat",
     color: "#999",
-    marginRight: 10,
   },
   addXPButton: {
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 10,
+  },
+  blurContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+  },
+  imageContainer: {
+    width: width * 0.8,
+    height: width * 0.8,
+    borderRadius: 20,
+    overflow: "hidden",
+    backgroundColor: "white",
+  },
+  hangoutImage: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
   },
 });
 
