@@ -1,9 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated, Dimensions, Easing } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import Svg, { Rect, Path } from 'react-native-svg';
+import React, { useState, useEffect, useRef } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Animated,
+  Dimensions,
+  Easing,
+  TouchableOpacity,
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import Svg, { Rect, Path } from "react-native-svg";
+import { useRouter } from "expo-router";
+import { ArrowLeftIcon } from "react-native-heroicons/outline";
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 
 const Cloud = ({ style }) => (
   <Svg height="40" width="80" viewBox="0 0 80 40" style={style}>
@@ -29,11 +39,11 @@ const PixelFlower = () => (
     <Rect x="7" y="12" width="2" height="4" fill="#4CAF50" />
     <Rect x="6" y="14" width="1" height="2" fill="#4CAF50" />
     <Rect x="9" y="14" width="1" height="2" fill="#4CAF50" />
-    
+
     {/* Leaves */}
     <Rect x="5" y="11" width="2" height="2" fill="#66BB6A" />
     <Rect x="9" y="10" width="2" height="2" fill="#66BB6A" />
-    
+
     {/* Flower petals */}
     <Rect x="7" y="2" width="2" height="2" fill="#FFC107" />
     <Rect x="5" y="4" width="2" height="2" fill="#FFC107" />
@@ -43,7 +53,7 @@ const PixelFlower = () => (
     <Rect x="5" y="8" width="2" height="2" fill="#FFC107" />
     <Rect x="9" y="8" width="2" height="2" fill="#FFC107" />
     <Rect x="7" y="10" width="2" height="2" fill="#FFC107" />
-    
+
     {/* Flower center */}
     <Rect x="7" y="6" width="2" height="2" fill="#FF5722" />
     <Rect x="6" y="5" width="1" height="1" fill="#FF5722" />
@@ -52,7 +62,7 @@ const PixelFlower = () => (
     <Rect x="10" y="6" width="1" height="2" fill="#FF5722" />
     <Rect x="6" y="8" width="1" height="1" fill="#FF5722" />
     <Rect x="9" y="8" width="1" height="1" fill="#FF5722" />
-    
+
     {/* Highlights */}
     <Rect x="7" y="3" width="1" height="1" fill="#FFE082" />
     <Rect x="6" y="4" width="1" height="1" fill="#FFE082" />
@@ -61,57 +71,76 @@ const PixelFlower = () => (
   </Svg>
 );
 
-
 const WaterFlowerAnimation = () => {
   const [animationProgress] = useState(new Animated.Value(0));
   const [drops, setDrops] = useState([]);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [countdown, setCountdown] = useState(5);
   const animationsRef = useRef([]);
+  const router = useRouter();
 
   useEffect(() => {
-    // Create water drops with staggered animation
-    const newDrops = Array(15).fill().map((_, i) => {
-      const anim = new Animated.Value(-height);
-      animationsRef.current.push(anim);
-      return {
-        id: i,
-        left: Math.random() * width,
-        animation: anim,
-      };
-    });
-    setDrops(newDrops);
+    const interval = setInterval(() => {
+      const now = new Date();
+      if (now.getSeconds() === 30 && !isAnimating) {
+        setIsAnimating(true);
+        startAnimation();
+      }
+    }, 1000);
 
-    // Start the main animation
-    Animated.timing(animationProgress, {
-      toValue: 1,
-      duration: 3000,
-      useNativeDriver: true,
-      easing: Easing.inOut(Easing.ease),
-    }).start();
+    return () => clearInterval(interval);
+  }, [isAnimating]);
+
+  useEffect(() => {
+    let timer;
+    if (isAnimating) {
+      timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev > 1) return prev - 1;
+          clearInterval(timer);
+          return 0;
+        });
+      }, 1200);
+    }
+    return () => clearInterval(timer);
+  }, [isAnimating]);
+
+  const startAnimation = () => {
+    // Create water drops with staggered animation
+    const newDrops = Array(15)
+      .fill()
+      .map((_, i) => {
+        const anim = new Animated.Value(-height);
+        animationsRef.current.push(anim);
+        return {
+          id: i,
+          left: Math.random() * width,
+          animation: anim,
+        };
+      });
+    setDrops(newDrops);
 
     Animated.parallel([
       Animated.timing(animationProgress, {
         toValue: 1,
-        duration: 3000,
+        duration: 4000,
         useNativeDriver: true,
         easing: Easing.inOut(Easing.ease),
       }),
       ...newDrops.map((drop, index) =>
-        Animated.loop(
-          Animated.timing(drop.animation, {
-            toValue: height,
-            duration: 3000 + Math.random() * 1000,
-            delay: index * 200, // Stagger the drops
-            useNativeDriver: true,
-            easing: Easing.linear,
-          })
-        )
+        Animated.timing(drop.animation, {
+          toValue: height,
+          duration: 4000,
+          delay: index * 200, // Stagger the drops
+          useNativeDriver: true,
+          easing: Easing.linear,
+        }),
       ),
-    ]).start();
-    // Cleanup function
-    return () => {
-      animationsRef.current.forEach(anim => anim.stopAnimation());
-    };
-  }, []);
+    ]).start(() => {
+      // Animation complete, navigate to create-memory
+      router.replace("/create-memory");
+    });
+  };
 
   const renderWaterDrops = () => {
     return drops.map((drop) => (
@@ -133,31 +162,74 @@ const WaterFlowerAnimation = () => {
   // Start the content lower down on the page
   const contentTranslate = animationProgress.interpolate({
     inputRange: [0, 1],
-    outputRange: [height * 0.3, 0], 
+    outputRange: [height * 0.3, 0],
   });
 
-  return (
-    <View style={styles.container}>
-      <LinearGradient
-        colors={['white', '#E8F5E9']}
-        style={StyleSheet.absoluteFillObject}
-      />
-      <Animated.View style={[styles.content, { transform: [{ translateY: contentTranslate }] }]}>
+  if (!isAnimating)
+    return (
+      <View style={styles.container}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
+          <ArrowLeftIcon size={24} color="#5E9020" />
+        </TouchableOpacity>
         <View style={styles.cloudContainer}>
           <Cloud style={styles.cloud1} />
           <Cloud style={styles.cloud2} />
         </View>
 
         <View style={styles.messageContainer}>
-          <Text style={styles.message}>keep phones</Text>
-          <Text style={[styles.message, styles.boldMessage]}>together</Text>
+          <Text style={styles.logo}>Water time!</Text>
+          <Text style={styles.message}>
+            {isAnimating
+              ? `Hold phones together for ${countdown}s ...`
+              : "Bring phones near each other!"}
+          </Text>
         </View>
 
-        {renderWaterDrops()}
+        {/* Animate the flower along with the content */}
+        <Animated.View style={[styles.pixelFlower]}>
+          <PixelFlower />
+        </Animated.View>
+      </View>
+    );
+
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+        <ArrowLeftIcon size={24} color="#5E9020" />
+      </TouchableOpacity>
+
+      <Animated.View
+        style={[
+          styles.content,
+          { transform: [{ translateY: contentTranslate }] },
+        ]}
+      >
+        <View style={styles.cloudContainer}>
+          <Cloud style={styles.cloud1} />
+          <Cloud style={styles.cloud2} />
+        </View>
+
+        <View style={styles.messageContainer}>
+          <Text style={styles.message}>
+            {isAnimating
+              ? `Hold phones together for ${countdown}s ...`
+              : "Bring phones near each other"}
+          </Text>
+        </View>
+
+        {isAnimating && renderWaterDrops()}
       </Animated.View>
 
       {/* Animate the flower along with the content */}
-      <Animated.View style={[styles.pixelFlower, { transform: [{ translateY: contentTranslate }] }]}>
+      <Animated.View
+        style={[
+          styles.pixelFlower,
+          { transform: [{ translateY: contentTranslate }] },
+        ]}
+      >
         <PixelFlower />
       </Animated.View>
     </View>
@@ -170,47 +242,55 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    height: height * 1.2,
+    height: height,
   },
   cloudContainer: {
-    position: 'absolute',
-    top: '5%',
+    position: "absolute",
+    top: "10%",
     left: 0,
     right: 0,
   },
   cloud1: {
-    position: 'absolute',
-    left: '10%',
+    position: "absolute",
+    left: "10%",
   },
   cloud2: {
-    position: 'absolute',
-    right: '15%',
+    position: "absolute",
+    right: "15%",
     top: 20,
   },
   messageContainer: {
-    position: 'absolute',
-    top: '30%',
-    width: '100%',
-    alignItems: 'center',
+    position: "absolute",
+    top: "30%",
+    width: "100%",
+    alignItems: "center",
   },
   message: {
-    fontSize: 24,
-    fontFamily: 'Montserrat',
-    color: '#333',
-    textAlign: 'center',
-  },
-  boldMessage: {
-    fontFamily: 'MontserratBold',
+    fontSize: 20,
+    fontFamily: "Montserrat",
+    color: "#333",
+    textAlign: "center",
   },
   waterDrop: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
   },
   pixelFlower: {
-    position: 'absolute',
-    bottom: '15%', // Adjust this value as needed
-    left: '50%',
-    marginLeft: -32, // Half of the SVG width to center it
+    position: "absolute",
+    bottom: "15%",
+    left: "50%",
+    marginLeft: -32,
+  },
+  backButton: {
+    position: "absolute",
+    top: 40,
+    left: 20,
+    zIndex: 10,
+  },
+  logo: {
+    color: "#5E9020",
+    fontSize: 32,
+    fontFamily: "NerkoOne",
   },
 });
 

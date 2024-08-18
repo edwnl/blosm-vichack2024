@@ -28,7 +28,7 @@
       "output": "static",
       "favicon": "./assets/images/flowers/sunflower.png"
     },
-    "plugins": ["expo-router", "expo-font"],
+    "plugins": ["expo-router", "expo-font", "expo-camera"],
     "extra": {
       "eas": {
         "projectId": "3851d135-4bb7-40bf-8dec-227826864f41"
